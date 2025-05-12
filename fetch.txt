@@ -1,0 +1,50 @@
+Task 1:
+
+The main choices being made here were the word to check for similarity, and the best way to consider only nontrivial words. 
+The choices made here were somewhat arbitrary but reasonable; the choice of the word "coronavirus" was due to its standing as the keystone of this large dataset.
+
+Task 2:
+
+The four attributees of similarity, cohesiveness, sentiment, and sentence length were chosen to be generally uncorrelated.
+Cohesiveness was chosen to indicate how coherent and relevent the sentence is by seeing if adjacent words were likely to appear together.
+Sentiment is a provided data point that should not be ignored.
+
+However, there ended up being some correlation between cohesiveness and sentence length, depending on the presence of words absent from the corpus. 
+There was also some correlation between similarity and cohesiveness, likely because if two words have high similarity to "Coronavirus" then by the triangle inequality they have high similarity to each other. 
+This is just the beginning, however.
+
+Task 3:
+
+If the entire network is frozen, then a set corpus is needed. However, the corpus of words needs to be relevant to the subject at hand. Since all sentences provided are about responses to the
+COVID-19 pandemic, the overall corpus would have to be as well. However, the set of data points is finite, so we would have to avoid including any of these sentences in the overall corpus. This may run into difficulties, particularly when considering the similarity and cohesiveness attribute,
+which will be very different with a different corpus -- it might not even contain vital words like "pandemic" or "vaccine," greatly skewing data. 
+
+If the transformer backbone is frozen, not a lot changes, since the general backbone of the process is pre-set. 
+The main unfreezing is the process of cross-validation, although setting aside a single dataset (e.g. the unused Data Set 4) as the training set could also work.
+
+If one of the task-specific heads is frozen, then, if it is task A, the cohesiveness attribute in particular runs into problems as the similarity function suddenly is unrelated to the pandemic. 
+If it is task B, then it can still be run and will work just as well, since the criteria for a proper noun likely being a particular type of proper noun is generally not specific to this data set.
+
+Transfer learning is beneficial when seeking a classifier to find out if a tweet is from a reputable source -- which, throughout 2020, many of us were trying to do with my head.
+The transfer learning process would likely use a pre-trained model like word2vec, as the English language remains the English language, even on the website formerly known as Twitter. 
+And if I have a large enough, COVID-related data set, I can freeze the cross-validation
+layer as described above, though this may have consequences. 
+Finding any correlations between the four attributes given, and then using this model to analyze a given tweet, perhaps with a fifth attribute for factual accuracy, could be applied to
+a news filter seeking to provide interested parties with reliable information about the pandemic -- just by looking at words!
+
+Task 4:
+
+The training loop for MTL was encoded through the notebook, using forward propagation throughout. Hypothetical data was a major concern, as not all words appeared in the corpus of tweets (e.g. the word "fish" does not appear anywhere in the dataset).
+Since word2vec raises an error when such a word appears, my decision was to assign a similarity of 0 between such a word and any word in the corpus (particualrly "coronavirus.") Meanwhile, for the cohesiveness
+attribute, I only considered pairs of adjacent words that both appeared in the corpus, which slightly limited which tweets could be analyzed.
+
+Probably the greatest difficulty came in assigning numerical values to various metrics. This was rarely a problem in Task 1 or 2A, aside from the fact that a disproportionate number of similarities
+were close to 1, and that small words (like "the" or "for") had a tendency to skew data (which is why my algorithm for cohesiveness skips them). I chose not to do this for similarity to "coronavirus" to keep the single-task algorithm relatively simple and to keep enough data points in each sentence to prevent outliers.
+
+The most significant difficulty came in Task 2B. The floating point values that are added or subtracted to the "beep" vector (the vector of weights for each type of capitalized word) 
+were selected in such a way that in most cases, the one word before or after this word would heavily alter one of the weights, but not rule out the possibility of the others. 
+These metrics were given initially larger values, and then tweaked after a closer look at the provided graphs showed that these changes would make the difference in similarity negligible.
+They could also be tested by using a separate neural network, but my data set did not contain a databse that classified capitalized words (e.g. a dataset that specified "India" as a place or "Fetch" as an organization), so I had no way to train this with the data set I had.
+
+There is definitely more to come with this project!
+

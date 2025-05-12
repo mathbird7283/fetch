@@ -1,0 +1,3 @@
+Requirements:
+
+This uses the python packages gensim, nltk, kaggle, kagglehub (for data collection), pandas, numpy, and matplotlib.
